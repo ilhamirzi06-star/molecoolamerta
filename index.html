@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#07111f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MOLECOOL AI">
     <title>MOLECOOL AI - Interactive Molecular Builder & Isomer Hunter</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
     
     <!-- Tailwind CSS for Modern UI styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -90,12 +96,61 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #2f6ba3;
         }
+
+        @media (max-width: 900px) {
+            body {
+                overflow: auto;
+            }
+            header {
+                padding: 0.9rem 0.9rem 1rem;
+            }
+            .app-main {
+                flex-direction: column;
+                overflow: auto;
+            }
+            .app-main > section {
+                width: 100%;
+                min-height: 50vh;
+            }
+            .left-panel {
+                border-right: 0;
+                border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+            }
+            .right-panel {
+                min-height: 70vh;
+            }
+            #ai-drawer {
+                width: min(92vw, 26rem);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .tool-ribbon {
+                flex-wrap: wrap;
+                gap: 0.6rem;
+            }
+            .tool-ribbon > div {
+                width: 100%;
+            }
+            .tool-ribbon > div:last-child {
+                justify-content: flex-end;
+            }
+            .control-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .floating-action {
+                left: 1rem;
+                right: 1rem;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
-<body class="text-slate-100 overflow-hidden h-screen flex flex-col">
+<body class="text-slate-100 overflow-x-hidden min-h-screen flex flex-col">
 
     <!-- Top Premium Navigation Bar -->
-    <header class="bg-[#11141d]/90 border-b border-slate-800/80 px-6 py-4 flex items-center justify-between backdrop-blur-md shrink-0">
+    <header class="bg-[#11141d]/90 border-b border-slate-800/80 px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between backdrop-blur-md shrink-0">
         <div class="flex items-center gap-3">
             <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2.5 rounded-xl shadow-lg shadow-emerald-500/10">
                 <i class="fa-solid fa-circle-nodes text-xl text-slate-900"></i>
@@ -109,7 +164,7 @@
         </div>
 
         <!-- Real-time formula display -->
-        <div class="flex items-center gap-4 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-xl">
+        <div class="flex flex-wrap items-center gap-3 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-xl">
             <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Formula Saat Ini:</span>
             <span id="formula-badge" class="mono-font text-lg font-bold text-emerald-400">H₂O</span>
         </div>
@@ -126,13 +181,13 @@
     </header>
 
     <!-- Main Interactive Workspace -->
-    <main class="flex-1 flex overflow-hidden">
+    <main class="app-main flex-1 flex overflow-hidden">
         
         <!-- LEFT: 2D Backbone Builder -->
-        <section class="w-[45%] border-r border-slate-800/80 flex flex-col bg-[#0e1118]">
+        <section class="left-panel w-full md:w-[45%] border-r-0 md:border-r border-slate-800/80 flex flex-col bg-[#0e1118] min-h-[50vh]">
             <!-- Tool Ribbon for 2D actions -->
-            <div class="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+            <div class="tool-ribbon p-4 bg-slate-900/40 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="flex flex-wrap items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
                     <button id="tool-atom-C" onclick="selectAtomTool('C')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active-tool bg-slate-800 text-emerald-400 border border-emerald-500/30">
                         <span class="w-3 h-3 rounded-full bg-[#3a3d45] inline-block shadow"></span> C
                     </button>
@@ -148,10 +203,10 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="autoAddHydrogens()" title="Otomatis melengkapi valensi atom dengan Hidrogen" class="px-3 py-2 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 text-xs font-semibold transition-all flex items-center gap-1.5">
+                    <button onclick="autoAddHydrogens()" title="Otomatis melengkapi valensi atom dengan Hidrogen" class="control-btn px-3 py-2 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 text-xs font-semibold transition-all flex items-center gap-1.5">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Auto +H
                     </button>
-                    <button onclick="clear2DCanvas()" title="Hapus semua atom" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition">
+                    <button onclick="clear2DCanvas()" title="Hapus semua atom" class="control-btn p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition">
                         <i class="fa-regular fa-trash-can"></i>
                     </button>
                 </div>
@@ -173,7 +228,7 @@
         </section>
 
         <!-- RIGHT: 3D Real-time Viewer -->
-        <section class="w-[55%] flex flex-col bg-[#0b0c10] relative">
+        <section class="right-panel w-full md:w-[55%] flex flex-col bg-[#0b0c10] relative min-h-[50vh]">
             
             <!-- Real-time status / Alert overlay -->
             <div id="toast-alert" class="absolute top-4 left-4 right-4 z-10 transition-all duration-300 transform translate-y-[-100px] opacity-0 pointer-events-none">
@@ -268,7 +323,7 @@
                 <canvas id="canvas-3d" class="w-full h-full"></canvas>
 
                 <!-- Glowing Floating AI Assistant Trigger -->
-                <button onclick="toggleAIDrawer(true)" class="absolute bottom-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 group">
+                <button onclick="toggleAIDrawer(true)" class="floating-action absolute bottom-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 group">
                     <span class="relative flex h-2.5 w-2.5">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-900"></span>
@@ -277,7 +332,7 @@
                 </button>
 
                 <!-- Slide-out AI Chemist Drawer -->
-                <div id="ai-drawer" class="absolute top-0 right-0 h-full w-96 bg-slate-950/95 border-l border-slate-800/80 transition-transform duration-300 transform translate-x-full z-20 flex flex-col backdrop-blur-md shadow-2xl shadow-emerald-500/10">
+                <div id="ai-drawer" class="absolute top-0 right-0 h-full w-[min(24rem,100%)] max-w-[100vw] bg-slate-950/95 border-l border-slate-800/80 transition-transform duration-300 transform translate-x-full z-20 flex flex-col backdrop-blur-md shadow-2xl shadow-emerald-500/10">
                     <!-- Drawer Header -->
                     <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
                         <div class="flex items-center gap-2">
@@ -434,6 +489,14 @@
 
         if (themeToggle) {
             themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.warn('Service worker registration failed:', err);
+                });
+            });
         }
 
         const savedTheme = localStorage.getItem('molekula-theme');
