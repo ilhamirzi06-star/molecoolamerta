@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLECOOL AI - Interactive Molecular Builder & Isomer Hunter</title>
+    
+    <!-- Tailwind CSS for Modern UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons for buttons and status indicators -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Sans and Inter Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D graphics rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls for fluid 3D camera navigation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #07111f;
+            color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.theme-light {
+            background-color: #0078f8;
+            color: #0f172a;
+        }
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200,
+        body.theme-light .text-slate-300,
+        body.theme-light .text-slate-400,
+        body.theme-light .text-slate-500,
+        body.theme-light .text-slate-600 {
+            color: #334155 !important;
+        }
+        body.theme-light .text-slate-100 {
+            color: #0f172a !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/60,
+        body.theme-light .border-slate-700\/60 {
+            border-color: #d9e2ef !important;
+        }
+        body.theme-light .bg-slate-900,
+        body.theme-light .bg-slate-900\/30,
+        body.theme-light .bg-slate-900\/40,
+        body.theme-light .bg-slate-900\/60,
+        body.theme-light .bg-slate-900\/70,
+        body.theme-light .bg-slate-900\/80,
+        body.theme-light .bg-slate-950,
+        body.theme-light .bg-slate-950\/40,
+        body.theme-light .bg-slate-950\/50,
+        body.theme-light .bg-slate-950\/60,
+        body.theme-light .bg-slate-950\/80,
+        body.theme-light .bg-slate-950\/95,
+        body.theme-light .bg-slate-800,
+        body.theme-light .bg-slate-800\/60,
+        body.theme-light .bg-slate-800\/70,
+        body.theme-light .bg-slate-800\/80,
+        body.theme-light .bg-\[\#11141d\],
+        body.theme-light .bg-\[\#0e1118\],
+        body.theme-light .bg-\[\#0b0c10\],
+        body.theme-light .bg-\[\#131722\] {
+            background-color: #f8fbff !important;
+        }
+        body.theme-light .bg-slate-950\/95 {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+        }
+        body.theme-light .bg-slate-950\/80 {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+        }
+        /* Custom scrollbar to keep layout clean */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0c1729;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f4f7a;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2f6ba3;
+        }
+    </style>
+</head>
+<body class="text-slate-100 overflow-hidden h-screen flex flex-col">
+
+    <!-- Top Premium Navigation Bar -->
+    <header class="bg-[#11141d]/90 border-b border-slate-800/80 px-6 py-4 flex items-center justify-between backdrop-blur-md shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2.5 rounded-xl shadow-lg shadow-emerald-500/10">
+                <i class="fa-solid fa-circle-nodes text-xl text-slate-900"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+                    MOLECOOL AI
+                </h1>
+                <p class="text-xs text-slate-400">2D Backbone Builder & Real-time 3D Projection</p>
+            </div>
+        </div>
+
+        <!-- Real-time formula display -->
+        <div class="flex items-center gap-4 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-xl">
+            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Formula Saat Ini:</span>
+            <span id="formula-badge" class="mono-font text-lg font-bold text-emerald-400">H₂O</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="theme-toggle" type="button" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition text-sm flex items-center gap-2" title="Ubah mode tampilan">
+                <i id="theme-icon" class="fa-solid fa-sun"></i>
+                <span id="theme-label">Mode terang</span>
+            </button>
+            <button onclick="toggleHelpModal(true)" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition text-sm flex items-center gap-2">
+                <i class="fa-regular fa-circle-question"></i> Panduan
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Interactive Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- LEFT: 2D Backbone Builder -->
+        <section class="w-[45%] border-r border-slate-800/80 flex flex-col bg-[#0e1118]">
+            <!-- Tool Ribbon for 2D actions -->
+            <div class="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                    <button id="tool-atom-C" onclick="selectAtomTool('C')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active-tool bg-slate-800 text-emerald-400 border border-emerald-500/30">
+                        <span class="w-3 h-3 rounded-full bg-[#3a3d45] inline-block shadow"></span> C
+                    </button>
+                    <button id="tool-atom-H" onclick="selectAtomTool('H')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 transition-all flex items-center gap-1.5 hover:text-slate-200">
+                        <span class="w-3 h-3 rounded-full bg-slate-100 inline-block shadow"></span> H
+                    </button>
+                    <button id="tool-atom-O" onclick="selectAtomTool('O')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 transition-all flex items-center gap-1.5 hover:text-slate-200">
+                        <span class="w-3 h-3 rounded-full bg-red-500 inline-block shadow"></span> O
+                    </button>
+                    <button id="tool-atom-N" onclick="selectAtomTool('N')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 transition-all flex items-center gap-1.5 hover:text-slate-200">
+                        <span class="w-3 h-3 rounded-full bg-blue-500 inline-block shadow"></span> N
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="autoAddHydrogens()" title="Otomatis melengkapi valensi atom dengan Hidrogen" class="px-3 py-2 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 text-xs font-semibold transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto +H
+                    </button>
+                    <button onclick="clear2DCanvas()" title="Hapus semua atom" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="flex-1 relative overflow-hidden bg-slate-950/40" id="canvas-2d-container">
+                <canvas id="canvas-2d" class="w-full h-full cursor-crosshair"></canvas>
+                <!-- UI Tooltip Guide -->
+                <div class="absolute bottom-4 left-4 right-4 bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex items-center gap-3 pointer-events-none backdrop-blur-sm">
+                    <i class="fa-solid fa-info-circle text-emerald-400 text-sm"></i>
+                    <p class="text-xs text-slate-300">
+                        <span class="font-bold text-emerald-400">Klik</span> untuk membuat atom. 
+                        <span class="font-bold text-emerald-400">Drag dari atom ke atom</span> untuk menyambung ikatan. 
+                        <span class="font-bold text-emerald-400">Klik kanan</span> untuk menghapus atom.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT: 3D Real-time Viewer -->
+        <section class="w-[55%] flex flex-col bg-[#0b0c10] relative">
+            
+            <!-- Real-time status / Alert overlay -->
+            <div id="toast-alert" class="absolute top-4 left-4 right-4 z-10 transition-all duration-300 transform translate-y-[-100px] opacity-0 pointer-events-none">
+                <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+                    <span id="toast-message" class="text-xs font-medium">Struktur Isomer Terdeteksi!</span>
+                </div>
+            </div>
+
+            <!-- Isomer Hunter / Gamification Dashboard -->
+            <div class="p-5 bg-slate-900/30 border-b border-slate-800/80 shrink-0">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 mr-4">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-400/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                                Gamifikasi
+                            </span>
+                            <h2 class="text-base font-bold text-slate-100 flex items-center gap-1.5">
+                                Isomer Hunter <i class="fa-solid fa-crosshairs text-amber-400 text-xs"></i>
+                            </h2>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Rakit struktur yang diminta untuk menyelesaikan misi belajar.</p>
+                        
+                        <!-- Category Filter and Select Challenge -->
+                        <div class="flex flex-wrap items-center gap-2 mt-3">
+                            <select id="challenge-category" onchange="filterChallenges(this.value)" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-emerald-500">
+                                <option value="all">Semua Misi (35+)</option>
+                                <option value="alkana">Alkana & Alkena</option>
+                                <option value="oksigenasi">Alkohol & Eter</option>
+                                <option value="karbonil">Karbonil & Asam</option>
+                                <option value="nitrogen">Amina & Lainnya</option>
+                            </select>
+                            
+                            <select id="challenge-selector" onchange="loadChallenge(parseInt(this.value))" class="flex-1 min-w-[150px] bg-slate-950 border border-slate-800 text-slate-100 text-xs px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-emerald-500 font-medium">
+                                <!-- Populated dynamically -->
+                            </select>
+
+                            <button onclick="triggerCustomAIMission()" class="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-robot"></i> Kustom AI
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl shrink-0">
+                        <div class="text-right">
+                            <p class="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Misi Selesai</p>
+                            <p class="text-base font-extrabold text-amber-400 mono-font" id="score-counter">0 / 35</p>
+                        </div>
+                        <i class="fa-solid fa-trophy text-amber-400 text-lg"></i>
+                    </div>
+                </div>
+
+                <!-- Active Challenge Indicator -->
+                <div class="mt-4 bg-[#131722]/80 border border-slate-800/80 rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-4 flex-1 mr-4">
+                        <div class="bg-amber-400/10 text-amber-400 border border-amber-400/20 p-2.5 rounded-xl text-center min-w-[70px]">
+                            <span class="block text-[9px] font-bold uppercase leading-none">Target</span>
+                            <span class="block text-base font-black tracking-tight mt-0.5" id="challenge-target-formula">H₂O</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-200" id="challenge-title">Molekul Air sederhana</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5" id="challenge-desc">Hubungkan 1 atom Oksigen dengan 2 atom Hidrogen.</p>
+                        </div>
+                    </div>
+                    <button onclick="checkChallenge()" class="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-amber-500/10 transition-all flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-shield-heart"></i> Validasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3D Canvas viewport -->
+            <div class="flex-1 relative overflow-hidden" id="canvas-3d-container">
+                <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                    <div class="bg-slate-900/70 border border-slate-800 px-3 py-1.5 rounded-lg backdrop-blur-sm text-xs text-slate-300 flex items-center gap-2">
+                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Mode 3D Real-time
+                    </div>
+                </div>
+
+                <!-- Style settings on viewport overlay -->
+                <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                    <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800/80 backdrop-blur-sm">
+                        <button id="btn-style-ballstick" onclick="set3DStyle('ballstick')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-400 transition-all">
+                            Ball-and-Stick
+                        </button>
+                        <button id="btn-style-spacefill" onclick="set3DStyle('spacefill')" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">
+                            Space-Filling
+                        </button>
+                    </div>
+                </div>
+
+                <!-- The Interactive 3D Canvas -->
+                <canvas id="canvas-3d" class="w-full h-full"></canvas>
+
+                <!-- Glowing Floating AI Assistant Trigger -->
+                <button onclick="toggleAIDrawer(true)" class="absolute bottom-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 group">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-900"></span>
+                    </span>
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm animate-bounce"></i> Asisten Kimia AI
+                </button>
+
+                <!-- Slide-out AI Chemist Drawer -->
+                <div id="ai-drawer" class="absolute top-0 right-0 h-full w-96 bg-slate-950/95 border-l border-slate-800/80 transition-transform duration-300 transform translate-x-full z-20 flex flex-col backdrop-blur-md shadow-2xl shadow-emerald-500/10">
+                    <!-- Drawer Header -->
+                    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-robot text-emerald-400 text-lg"></i>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-100">Asisten Kimia AI</h3>
+                                <p class="text-[10px] text-slate-400">Model: gemini-3-flash-preview</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleAIDrawer(false)" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- AI Chat & Output Container -->
+                    <div class="flex-1 overflow-y-auto p-4 space-y-4" id="ai-chat-container">
+                        <!-- Welcome Chat Bubble -->
+                        <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-3 text-xs leading-relaxed text-slate-300">
+                            <p class="font-bold text-emerald-400 mb-1">Halo Rekan Peneliti! 👋</p>
+                            Saya adalah asisten virtual lab Anda. Gambarlah struktur organik di kanvas sebelah kiri, lalu klik tombol analisis di bawah untuk memeriksa kestabilan serta kegunaannya, atau ketik pertanyaan apa saja di kolom chat!
+                        </div>
+                        <!-- Placeholder for loading dynamic analysis -->
+                        <div id="ai-analysis-output" class="hidden"></div>
+                    </div>
+
+                    <!-- Drawer Action Ribbon -->
+                    <div class="p-3 border-t border-slate-800/60 bg-slate-950/50 flex flex-col gap-2 shrink-0">
+                        <div>
+                            <label class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">API Key Gemini</label>
+                            <div class="flex gap-2 mt-1">
+                                <input type="password" id="gemini-api-key" placeholder="Masukkan API key..." class="flex-1 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500 placeholder-slate-500">
+                                <button type="button" onclick="saveGeminiApiKey()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-lg text-[10px] font-bold transition">Simpan</button>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">Dapatkan dari Google AI Studio. Kunci disimpan di browser.</p>
+                        </div>
+
+                        <button onclick="analyzeCurrentStructure()" class="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i> Analisis Struktur Saat Ini
+                        </button>
+                        
+                        <!-- Chat Input Form -->
+                        <form onsubmit="handleAIChatSubmit(event)" class="flex gap-2 mt-1">
+                            <input type="text" id="ai-chat-input" placeholder="Tanya tentang reaksi, properti..." class="flex-1 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500 placeholder-slate-500">
+                            <button type="submit" class="px-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-lg text-xs font-bold transition flex items-center justify-center">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Color legend overlaid dynamically -->
+                <div class="absolute bottom-4 left-4 bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 flex flex-col gap-2.5 backdrop-blur-md">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Standard Warna CPK</p>
+                    <div class="flex flex-col gap-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-[#3a3d45] border border-slate-600 shadow-sm"></span>
+                            <span class="text-slate-300 font-medium">Carbon (C)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-slate-100 border border-slate-300 shadow-sm"></span>
+                            <span class="text-slate-300 font-medium">Hydrogen (H)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></span>
+                            <span class="text-slate-300 font-medium">Oxygen (O)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-blue-500 shadow-sm"></span>
+                            <span class="text-slate-300 font-medium">Nitrogen (N)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Panduan Modal (Help Modal) -->
+    <div id="help-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 transition-all duration-300 opacity-0 pointer-events-none">
+        <div class="bg-slate-900 border border-slate-800 max-w-lg w-full rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="toggleHelpModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200 transition text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info"></i> Petunjuk Penggunaan MOLECOOL AI
+            </h3>
+            
+            <div class="mt-4 space-y-4 text-sm text-slate-300 leading-relaxed">
+                <div>
+                    <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Menggambar di 2D Canvas</h4>
+                    <p class="text-xs text-slate-400 pl-3">Pilih elemen di panel atas (C, H, O, atau N). Klik kiri pada kanvas untuk menempatkan atom. Tarik garis (drag) dari satu atom ke atom lainnya untuk menyambungkan ikatan kovalen.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Auto+H (Saturasi Cepat)</h4>
+                    <p class="text-xs text-slate-400 pl-3">Malas menyusun ikatan Hidrogen satu per satu? Klik tombol <strong>Auto +H</strong> untuk menambahkan Hidrogen secara otomatis sesuai kapasitas ikatan yang tersisa.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Kontrol Navigasi 3D</h4>
+                    <p class="text-xs text-slate-400 pl-3">Gunakan drag mouse kiri untuk memutar kamera, drag mouse kanan untuk menggeser, dan scroll mouse untuk melakukan zoom.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Menyelesaikan Isomer Hunter</h4>
+                    <p class="text-xs text-slate-400 pl-3">Pilih kategori di menu atas, pilih target molekul kustom dari dropdown, atau minta asisten AI merumuskan misi molekul acak kustom Anda!</p>
+                </div>
+            </div>
+            
+            <button onclick="toggleHelpModal(false)" class="mt-6 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
+                Mulai Eksplorasi
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STRUCTURES & STATES ---
+        let atoms = [];
+        let bonds = [];
+        let selectedAtomTool = 'C';
+        let dragStartAtom = null;
+        let style3D = 'ballstick'; // 'ballstick' | 'spacefill'
+        let currentChallengeIndex = 0;
+        let score = 0;
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+
+        function applyTheme(theme) {
+            const isLight = theme === 'light';
+            document.body.classList.toggle('theme-light', isLight);
+
+            if (themeToggle) {
+                themeToggle.classList.toggle('bg-slate-100', isLight);
+                themeToggle.classList.toggle('text-slate-900', isLight);
+                themeToggle.classList.toggle('border-slate-200', isLight);
+                themeToggle.classList.toggle('bg-slate-800', !isLight);
+                themeToggle.classList.toggle('text-slate-100', !isLight);
+                themeToggle.classList.toggle('border-slate-700', !isLight);
+            }
+
+            if (themeIcon) {
+                themeIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            }
+
+            if (themeLabel) {
+                themeLabel.textContent = isLight ? 'Mode gelap' : 'Mode terang';
+            }
+
+            localStorage.setItem('molekula-theme', theme);
+        }
+
+        function toggleTheme() {
+            const nextTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
+            applyTheme(nextTheme);
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        const savedTheme = localStorage.getItem('molekula-theme');
+        applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+
+        // Gemini API Configuration & Backoff Logic
+        let GEMINI_API_KEY = localStorage.getItem('molekula-gemini-key') || "";
+        const GEMINI_MODEL = "gemini-3-flash-preview";
+        const GEMINI_SYSTEM_INSTRUCTION = "Anda adalah Asisten Ahli Kimia Komputasi MOLECOOL AI. Tugas Anda adalah menganalisis struktur senyawa kimia organik yang digambar pengguna di kanvas. Pengguna akan mengirimkan data geometri senyawa dalam format JSON (daftar atom dan daftar koneksi ikatan kovalen) beserta rumus kimianya. Anda harus memvalidasi kestabilan molekul tersebut menurut aturan oktet dan struktur valensi standar kimia organik (Karbon memiliki valensi 4, Hidrogen memiliki valensi 1, Oksigen memiliki valensi 2, Nitrogen memiliki valensi 3). Berikan evaluasi apakah molekul tersebut stabil, berikan estimasi nama IUPAC atau nama umumnya, dan jelaskan karakteristik fisik, kegunaan praktis, serta bahaya keselamatannya dalam Bahasa Indonesia yang edukatif, ringkas, dan ramah. Gunakan format Markdown (bold, list, sub-heading) yang rapi untuk rendering HTML.";
+
+        // --- STREAMING_CHUNK: Defining 35+ Built-in Challenges Database ---
+        const CHALLENGES = [
+            // ALKANA & ALKENA
+            { category: 'alkana', formula: 'H2O', title: 'Molekul Air Sederhana', desc: 'Hubungkan 1 atom Oksigen dengan 2 atom Hidrogen.', sig: 'H[O]|H[O]|O[H,H]' },
+            { category: 'alkana', formula: 'CH4', title: 'Metana', desc: 'Hubungkan 1 atom Karbon pusat dengan 4 atom Hidrogen.', sig: 'C[H,H,H,H]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C2H6', title: 'Etana', desc: 'Rantai jenuh 2 Karbon (C-C) dengan 6 atom Hidrogen.', sig: 'C[C,H,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C3H8', title: 'Propana', desc: 'Rantai lurus 3 Karbon (C-C-C) dengan 8 atom Hidrogen.', sig: 'C[C,C,H,H]|C[C,H,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C4H10', title: 'n-Butana', desc: 'Rantai lurus 4 Karbon (C-C-C-C) terhidrogenasi penuh.', sig: 'C[C,C,H,H]|C[C,C,H,H]|C[C,H,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C4H10', title: 'Isobutana (Metilpropana)', desc: 'Isomer bercabang dari butana: Karbon pusat mengikat 3 gugus metil (C).', sig: 'C[C,C,C,H]|C[C,H,H,H]|C[C,H,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C2H4', title: 'Etena (Etilena)', desc: 'Hubungkan 2 Karbon dengan ikatan ganda. Pastikan sisa ikatan dipenuhi Hidrogen (4 total).', sig: 'C[C,C,H,H]|C[C,C,H,H]|H[C]|H[C]|H[C]|H[C]' },
+            { category: 'alkana', formula: 'C3H6', title: 'Propena', desc: 'Rantai 3 karbon yang memiliki satu ikatan ganda (C=C-C).', sig: 'C[C,C,H,H]|C[C,C,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
+            
+            // ALKOHOL & ETER (OKSIGENASI)
+            { category: 'oksigenasi', formula: 'CH4O', title: 'Metanol', desc: 'Karbon mengikat Oksigen (C-O), dengan Oksigen mengikat Hidrogen (gugus hidroksil).', sig: 'C[H,H,H,O]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
+            { category: 'oksigenasi', formula: 'C2H6O', title: 'Etanol', desc: 'Molekul alkohol dalam minuman: Susunan rantai C-C-O, lalu saturasi dengan Hidrogen.', sig: 'C[C,H,H,H]|C[C,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
+            { category: 'oksigenasi', formula: 'C2H6O', title: 'Dimetil Eter (Isomer Etanol)', desc: 'Oksigen berada di tengah menjembatani 2 Karbon (C-O-C).', sig: 'C[H,H,H,O]|C[H,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
+            { category: 'oksigenasi', formula: 'C3H8O', title: '1-Propanol', desc: 'Alkohol berantai lurus 3 Karbon dengan Oksigen di ujung (C-C-C-O-H).', sig: 'C[C,C,H,H]|C[C,H,H,H]|C[C,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
+            { category: 'oksigenasi', formula: 'C3H8O', title: '2-Propanol (Isopropanol)', desc: 'Oksigen terikat pada Karbon tengah (C-C(OH)-C). Pelarut antiseptik populer.', sig: 'C[C,H,H,H]|C[C,H,H,H]|C[C,C,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
+            
+            // KARBONIL & ASAM
+            { category: 'karbonil', formula: 'CH2O', title: 'Formaldehida (Metanal)', desc: 'Karbon mengikat ganda 1 Oksigen, serta mengikat 2 Hidrogen.', sig: 'C[H,H,O,O]|H[C]|H[C]|O[C,C]' },
+            { category: 'karbonil', formula: 'C2H4O', title: 'Asetaldehida (Etanal)', desc: 'Hubungkan rantai C-C, di mana salah satu C mengikat ganda Oksigen (C=O).', sig: 'C[C,H,H,H]|C[C,H,O,O]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
+            { category: 'karbonil', formula: 'C3H6O', title: 'Aseton (Propanon)', desc: 'Rantai 3 Karbon di mana Karbon tengah mengikat ganda Oksigen (C-C(=O)-C).', sig: 'C[C,H,H,H]|C[C,H,H,H]|C[C,C,O,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
+            { category: 'karbonil', formula: 'CH2O2', title: 'Asam Format (Asam Metanoat)', desc: 'Karbon mengikat ganda 1 Oksigen dan mengikat tunggal Oksigen lain yang mengikat Hidrogen.', sig: 'C[H,O,O,O]|H[C]|H[O]|O[C,C]|O[C,H]' },
+            { category: 'karbonil', formula: 'C2H4O2', title: 'Asam Asetat (Cuka)', desc: 'Rakit rantai C-C, salah satu Karbon mengikat ganda O dan tunggal O-H.', sig: 'C[C,H,H,H]|C[C,O,O,O]|H[C]|H[C]|H[C]|H[O]|O[C,C]|O[C,H]' },
+            { category: 'karbonil', formula: 'C2H4O2', title: 'Metil Format (Isomer Cuka)', desc: 'Sebuah Ester sederhana dengan pola ikatan C-O-C(=O)-H.', sig: 'C[H,H,H,O]|C[H,O,O,O]|H[C]|H[C]|H[C]|H[C]|O[C,C]|O[C,C]' },
+            
+            // NITROGEN & LAINNYA
+            { category: 'nitrogen', formula: 'NH3', title: 'Amonia', desc: 'Hubungkan 1 atom Nitrogen dengan 3 atom Hidrogen.', sig: 'H[N]|H[N]|H[N]|N[H,H,H]' },
+            { category: 'nitrogen', formula: 'CH5N', title: 'Metilamina', desc: 'Hubungkan gugus Metil ke Nitrogen (C-N) lalu saturasi dengan Hidrogen.', sig: 'C[H,H,H,N]|H[C]|H[C]|H[C]|H[N]|H[N]|N[C,H,H]' },
+            { category: 'nitrogen', formula: 'CH3NO', title: 'Formamida', desc: 'Karbon mengikat ganda Oksigen dan mengikat tunggal Nitrogen.', sig: 'C[H,N,O,O]|H[C]|H[N]|H[N]|N[C,H,H]|O[C,C]' },
+            { category: 'nitrogen', formula: 'CH4N2O', title: 'Urea', desc: 'Karbon pusat mengikat ganda Oksigen dan mengikat dua Nitrogen (N-C(=O)-N).', sig: 'C[N,N,O,O]|H[N]|H[N]|H[N]|H[N]|N[C,H,H]|N[C,H,H]|O[C,C]' }
+        ];
+
+        let activeChallenges = [...CHALLENGES];
+
+        function saveGeminiApiKey() {
+            const input = document.getElementById('gemini-api-key');
+            if (!input) return;
+
+            const key = input.value.trim();
+            if (!key) {
+                showToast('Masukkan API key Gemini terlebih dahulu.', true);
+                return;
+            }
+
+            GEMINI_API_KEY = key;
+            localStorage.setItem('molekula-gemini-key', key);
+            showToast('API key Gemini tersimpan. Anda bisa mulai memakai asisten AI.', false);
+        }
+
+        function populateGeminiApiKeyInput() {
+            const input = document.getElementById('gemini-api-key');
+            if (input && GEMINI_API_KEY) {
+                input.value = GEMINI_API_KEY;
+            }
+        }
+
+        // --- STREAMING_CHUNK: Integrating Gemini API Call & Exponential Backoff ---
+        async function fetchGeminiAPI(prompt, systemPrompt = GEMINI_SYSTEM_INSTRUCTION, retries = 3, delay = 1000) {
+            if (!GEMINI_API_KEY) {
+                throw new Error('Missing API key');
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        console.warn(`Gemini API rate limited (429). Retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchGeminiAPI(prompt, systemPrompt, retries - 1, delay * 2);
+                    }
+                    throw new Error(`API returned HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak dapat merumuskan analisis saat ini.";
+            } catch (error) {
+                if (retries > 0) {
+                    console.warn(`Request failed. Retrying... Attempts left: ${retries}`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchGeminiAPI(prompt, systemPrompt, retries - 1, delay * 2);
+                }
+                throw error;
+            }
+        }
+
+        // Toggle AI Drawer visibility
+        function toggleAIDrawer(show) {
+            const drawer = document.getElementById('ai-drawer');
+            if (show) {
+                drawer.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('translate-x-full');
+            }
+        }
+
+        // Convert simple markdown elements (Headers, list, bold) into nice HTML
+        function convertMarkdownToHTML(md) {
+            let html = md;
+            // Headers
+            html = html.replace(/### (.*?)\n/g, '<h4 class="text-xs font-bold text-emerald-400 mt-2 mb-1">$1</h4>');
+            html = html.replace(/## (.*?)\n/g, '<h4 class="text-sm font-black text-emerald-400 mt-3 mb-1">$1</h4>');
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100 font-bold">$1</strong>');
+            // Bullet list items
+            html = html.replace(/^\* (.*?)$/gm, '<li class="ml-3 list-disc text-slate-300 py-0.5">$1</li>');
+            html = html.replace(/^- (.*?)$/gm, '<li class="ml-3 list-disc text-slate-300 py-0.5">$1</li>');
+            // Linebreaks
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+
+        // Create elegant chat bubble inside AI drawer
+        function appendChatBubble(sender, content, isHTML = false) {
+            const container = document.getElementById('ai-chat-container');
+            const bubble = document.createElement('div');
+            
+            if (sender === 'ai') {
+                bubble.className = "bg-slate-900 border border-emerald-500/20 rounded-xl p-3 text-xs leading-relaxed text-slate-300 transition-all duration-300 animate-fadeIn";
+                if (isHTML) {
+                    bubble.innerHTML = content;
+                } else {
+                    bubble.innerHTML = convertMarkdownToHTML(content);
+                }
+            } else {
+                bubble.className = "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 self-end rounded-xl p-3 text-xs ml-8 leading-relaxed text-right";
+                bubble.innerText = content;
+            }
+
+            container.appendChild(bubble);
+            // Auto-scroll to bottom of the chat view
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Pack currently drawn elements and formula into a descriptive context for AI analysis
+        async function analyzeCurrentStructure() {
+            if (atoms.length === 0) {
+                showToast("Kanvas 2D masih kosong! Silakan buat atom terlebih dahulu.", true);
+                return;
+            }
+
+            // Retrieve current chemical formula from badge
+            const currentFormula = document.getElementById('formula-badge').innerText;
+
+            // Generate clean JSON topology summary for LLM to digest
+            const parsedAtoms = atoms.map(a => ({ id: a.id, element: a.type }));
+            const parsedBonds = bonds.map(b => {
+                const s = atoms.find(a => a.id === b.source);
+                const t = atoms.find(a => a.id === b.target);
+                return `${s?.type || '?'}-${t?.type || '?'}`;
+            });
+
+            // Put a Loading skeleton state
+            appendChatBubble('ai', `
+                <div class="flex items-center gap-2 text-emerald-400">
+                    <i class="fa-solid fa-spinner animate-spin"></i>
+                    <span>Sedang merumuskan analisis struktur ${currentFormula}...</span>
+                </div>
+            `, true);
+
+            const prompt = `Analisis struktur ini:
+            Formula Molekul: ${currentFormula}
+            Daftar Atom Geometri (Atoms): ${JSON.stringify(parsedAtoms)}
+            Sambungan Kovalen (Bonds): ${JSON.stringify(parsedBonds)}
+            
+            Apakah struktur kovalen ini logis dan stabil secara organik? Apa kegunaannya dalam dunia nyata? Berikan analisis terperinci.`;
+
+            try {
+                const aiResult = await fetchGeminiAPI(prompt);
+                
+                // Remove the last loader bubble
+                const container = document.getElementById('ai-chat-container');
+                if (container.lastChild) {
+                    container.removeChild(container.lastChild);
+                }
+
+                // Show dynamic AI results
+                appendChatBubble('ai', aiResult);
+            } catch (error) {
+                console.error("AI Analysis failed:", error);
+                const container = document.getElementById('ai-chat-container');
+                if (container.lastChild) {
+                    container.removeChild(container.lastChild);
+                }
+                if (error.message === 'Missing API key') {
+                    appendChatBubble('ai', `<span class="text-amber-400"><i class="fa-solid fa-key"></i> Masukkan API key Gemini di panel AI sebelum memakai asisten.</span>`, true);
+                } else {
+                    appendChatBubble('ai', `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation"></i> Gagal menghubungi Asisten AI. Coba beberapa saat lagi atau lengkapi struktur kovalen Anda.</span>`, true);
+                }
+            }
+        }
+
+        // Handle Chat form Submission
+        async function handleAIChatSubmit(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('ai-chat-input');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            // Add user bubble
+            appendChatBubble('user', query);
+            inputEl.value = "";
+
+            // Pack context to let AI know what chemical compounds the user is actively working on
+            const currentFormula = document.getElementById('formula-badge').innerText;
+            const parsedAtoms = atoms.map(a => ({ id: a.id, element: a.type }));
+            const parsedBonds = bonds.map(b => {
+                const s = atoms.find(a => a.id === b.source);
+                const t = atoms.find(a => a.id === b.target);
+                return `${s?.type || '?'}-${t?.type || '?'}`;
+            });
+
+            // Loading state
+            appendChatBubble('ai', `
+                <div class="flex items-center gap-2 text-emerald-400">
+                    <i class="fa-solid fa-spinner animate-spin"></i>
+                    <span>Berpikir...</span>
+                </div>
+            `, true);
+
+            const richPrompt = `Konteks Kanvas Kimia Aktif Saat Ini:
+            Formula Molekul: ${currentFormula}
+            Struktur Atoms: ${JSON.stringify(parsedAtoms)}
+            Struktur Bonds: ${JSON.stringify(parsedBonds)}
+            
+            Pertanyaan Pengguna: "${query}"`;
+
+            try {
+                const responseText = await fetchGeminiAPI(richPrompt);
+
+                // Clear loader bubble
+                const container = document.getElementById('ai-chat-container');
+                if (container.lastChild) {
+                    container.removeChild(container.lastChild);
+                }
+
+                appendChatBubble('ai', responseText);
+            } catch (error) {
+                console.error("AI Chat failed:", error);
+                const container = document.getElementById('ai-chat-container');
+                if (container.lastChild) {
+                    container.removeChild(container.lastChild);
+                }
+                if (error.message === 'Missing API key') {
+                    appendChatBubble('ai', `<span class="text-amber-400"><i class="fa-solid fa-key"></i> Masukkan API key Gemini di panel AI sebelum memakai asisten.</span>`, true);
+                } else {
+                    appendChatBubble('ai', `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation"></i> Terjadi kegagalan koneksi ke server AI. Silakan coba kembali.</span>`, true);
+                }
+            }
+        }
+
+        // --- CPK Colors mappings
+        const CPK_COLORS = {
+            'C': '#3a3d45', // Dark Carbon
+            'H': '#f8fafc', // Light Hydrogen
+            'O': '#ef4444', // Red Oxygen
+            'N': '#3b82f6'  // Blue Nitrogen
+        };
+
+        const ATOM_VALENCIES = {
+            'C': 4,
+            'H': 1,
+            'O': 2,
+            'N': 3
+        };
+
+        // Canvas 2D references
+        const canvas2D = document.getElementById('canvas-2d');
+        const ctx2D = canvas2D.getContext('2d');
+        const canvas2DContainer = document.getElementById('canvas-2d-container');
+
+        // Three.js 3D variables
+        let scene, camera, renderer, controls;
+        let threeAtoms = [];
+        let threeBonds = [];
+
+        // SPRING-EMBEDDER 3D SIMULATION CONSTANTS
+        const K_SPRING = 0.08;
+        const L_SPRING = 2.5;
+        const K_REPULSION = 4.5;
+        const damping = 0.85;
+
+        // --- STREAMING_CHUNK: Initializing 2D & 3D canvases ---
+        // Setup all modules on window load
+        window.onload = function() {
+            init2DCanvas();
+            init3D();
+            updateFormula();
+            populateGeminiApiKeyInput();
+            
+            // Build challenges list
+            filterChallenges('all');
+            
+            // Render cycles
+            animate3D();
+            animate2DPhysics();
+        };
+
+        function toggleHelpModal(show) {
+            const modal = document.getElementById('help-modal');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // --- 2D CANVAS SYSTEM ---
+        function init2DCanvas() {
+            resize2DCanvas();
+            window.addEventListener('resize', () => {
+                resize2DCanvas();
+                resize3DViewport();
+            });
+
+            // Mouse Events for drawing
+            canvas2D.addEventListener('mousedown', handleMouseDown);
+            canvas2D.addEventListener('mousemove', handleMouseMove);
+            canvas2D.addEventListener('mouseup', handleMouseUp);
+            canvas2D.addEventListener('contextmenu', (e) => e.preventDefault()); // Disable context menu
+        }
+
+        function resize2DCanvas() {
+            canvas2D.width = canvas2DContainer.clientWidth;
+            canvas2D.height = canvas2DContainer.clientHeight;
+        }
+
+        // Choose tool from toolbar UI
+        function selectAtomTool(type) {
+            selectedAtomTool = type;
+            ['C', 'H', 'O', 'N'].forEach(atomType => {
+                const btn = document.getElementById(`tool-atom-${atomType}`);
+                if (atomType === type) {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active-tool bg-slate-800 text-emerald-400 border border-emerald-500/30";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 transition-all flex items-center gap-1.5 hover:text-slate-200";
+                }
+            });
+        }
+
+        // --- STREAMING_CHUNK: 2D Interactions and Graph Logic ---
+        function handleMouseDown(e) {
+            const rect = canvas2D.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check if right click to delete
+            if (e.button === 2) {
+                const hovered = getAtomAt(x, y);
+                if (hovered) {
+                    deleteAtom(hovered.id);
+                }
+                return;
+            }
+
+            const clickedAtom = getAtomAt(x, y);
+            if (clickedAtom) {
+                // Start drawing bond
+                dragStartAtom = clickedAtom;
+            } else {
+                // Create a new atom node
+                createAtom(selectedAtomTool, x, y);
+            }
+        }
+
+        let mouseX = 0, mouseY = 0;
+        function handleMouseMove(e) {
+            const rect = canvas2D.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        }
+
+        function handleMouseUp(e) {
+            if (dragStartAtom) {
+                const rect = canvas2D.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const endAtom = getAtomAt(x, y);
+
+                // Create bond if dropped on a different valid atom
+                if (endAtom && endAtom.id !== dragStartAtom.id) {
+                    createBond(dragStartAtom.id, endAtom.id);
+                }
+                dragStartAtom = null;
+            }
+        }
+
+        // Get atom close to coordinates
+        function getAtomAt(x, y, radius = 22) {
+            return atoms.find(a => Math.hypot(a.x - x, a.y - y) < radius);
+        }
+
+        // Create new Atom
+        let atomIdCounter = 0;
+        function createAtom(type, x, y) {
+            const newAtom = {
+                id: atomIdCounter++,
+                type: type,
+                x: x,
+                y: y,
+                z: (Math.random() - 0.5) * 50, // Small random Z displacement for 3D layout
+                // Velocity vectors for the force layout simulation
+                vx: 0,
+                vy: 0,
+                vz: 0
+            };
+            atoms.push(newAtom);
+            sync3DModel();
+            updateFormula();
+        }
+
+        // Delete specific atom and connected bonds
+        function deleteAtom(id) {
+            atoms = atoms.filter(a => a.id !== id);
+            bonds = bonds.filter(b => b.source !== id && b.target !== id);
+            sync3DModel();
+            updateFormula();
+        }
+
+        // Create a bond link between two atoms
+        function createBond(id1, id2) {
+            // Avoid duplicate bonds
+            const exists = bonds.some(b => 
+                (b.source === id1 && b.target === id2) || 
+                (b.source === id2 && b.target === id1)
+            );
+            if (!exists) {
+                bonds.push({ source: id1, target: id2 });
+                sync3DModel();
+                updateFormula();
+            }
+        }
+
+        // Clear layout entirely
+        function clear2DCanvas() {
+            atoms = [];
+            bonds = [];
+            sync3DModel();
+            updateFormula();
+        }
+
+        // --- STREAMING_CHUNK: Designing Auto Hydrogen Satisfaction ---
+        // Auto-complete valency of organic structure with Hydrogens
+        function autoAddHydrogens() {
+            const currentAtoms = [...atoms];
+            currentAtoms.forEach(atom => {
+                if (atom.type === 'H') return; // Only saturate C, O, N
+
+                const valency = ATOM_VALENCIES[atom.type] || 0;
+                // Count current bonds
+                const currentBondsCount = bonds.filter(b => b.source === atom.id || b.target === atom.id).length;
+                const needed = valency - currentBondsCount;
+
+                if (needed > 0) {
+                    for (let i = 0; i < needed; i++) {
+                        // Place Hydrogen in a star-pattern angle around the parent atom
+                        const angle = (Math.PI * 2 * i / needed) + (currentBondsCount * 0.5);
+                        const radius = 60;
+                        const hX = atom.x + Math.cos(angle) * radius;
+                        const hY = atom.y + Math.sin(angle) * radius;
+
+                        // Add the Hydrogen atom
+                        const hId = atomIdCounter++;
+                        const hAtom = {
+                            id: hId,
+                            type: 'H',
+                            x: hX,
+                            y: hY,
+                            z: (Math.random() - 0.5) * 50,
+                            vx: 0, vy: 0, vz: 0
+                        };
+                        atoms.push(hAtom);
+                        // Connect bond
+                        bonds.push({ source: atom.id, target: hId });
+                    }
+                }
+            });
+            sync3DModel();
+            updateFormula();
+        }
+
+        // --- STREAMING_CHUNK: Computing Chemical Formula ---
+        // Dynamically compute and format Hill System chemical formula
+        function updateFormula() {
+            if (atoms.length === 0) {
+                document.getElementById('formula-badge').innerHTML = "Kosong";
+                return;
+            }
+
+            const counts = {};
+            atoms.forEach(a => {
+                counts[a.type] = (counts[a.type] || 0) + 1;
+            });
+
+            // Format formula in Hill system style (Carbon first, then Hydrogen, then rest alphabetical)
+            let formatted = "";
+            const elementsOrder = [];
+            if (counts['C']) elementsOrder.push('C');
+            if (counts['H']) elementsOrder.push('H');
+            
+            Object.keys(counts).sort().forEach(el => {
+                if (el !== 'C' && el !== 'H') {
+                    elementsOrder.push(el);
+                }
+            });
+
+            elementsOrder.forEach(el => {
+                const count = counts[el];
+                formatted += el + (count > 1 ? `<sub>${count}</sub>` : "");
+            });
+
+            document.getElementById('formula-badge').innerHTML = formatted;
+        }
+
+        // --- STREAMING_CHUNK: 2D Render loop & Physics algorithm ---
+        // 2D Canvas Physics and Draw loop
+        function animate2DPhysics() {
+            // Apply 2D force layout iteration for crisp and organized placement
+            applyForceLayout();
+
+            // Clear 2D Canvas
+            ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
+
+            // Draw links (Bonds)
+            bonds.forEach(bond => {
+                const s = atoms.find(a => a.id === bond.source);
+                const t = atoms.find(a => a.id === bond.target);
+                if (s && t) {
+                    ctx2D.strokeStyle = 'rgba(148, 163, 184, 0.5)';
+                    ctx2D.lineWidth = 4;
+                    ctx2D.beginPath();
+                    ctx2D.moveTo(s.x, s.y);
+                    ctx2D.lineTo(t.x, t.y);
+                    ctx2D.stroke();
+                }
+            });
+
+            // Draw preview bond if dragging
+            if (dragStartAtom) {
+                ctx2D.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+                ctx2D.lineWidth = 3;
+                ctx2D.setLineDash([6, 6]);
+                ctx2D.beginPath();
+                ctx2D.moveTo(dragStartAtom.x, dragStartAtom.y);
+                ctx2D.lineTo(mouseX, mouseY);
+                ctx2D.stroke();
+                ctx2D.setLineDash([]); // Reset
+            }
+
+            // Draw node spheres
+            atoms.forEach(atom => {
+                const color = CPK_COLORS[atom.type] || '#fff';
+                
+                // Outer glow shadow for active styling
+                ctx2D.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx2D.shadowBlur = 10;
+                ctx2D.shadowOffsetY = 4;
+
+                ctx2D.fillStyle = color;
+                ctx2D.beginPath();
+                ctx2D.arc(atom.x, atom.y, 16, 0, Math.PI * 2);
+                ctx2D.fill();
+
+                // Reset shadow for text overlays
+                ctx2D.shadowColor = 'transparent';
+                ctx2D.shadowBlur = 0;
+                ctx2D.shadowOffsetY = 0;
+
+                ctx2D.strokeStyle = 'rgba(15, 23, 42, 0.4)';
+                ctx2D.lineWidth = 2.5;
+                ctx2D.stroke();
+
+                // Draw Text element
+                ctx2D.fillStyle = (atom.type === 'H') ? '#1e293b' : '#f8fafc';
+                ctx2D.font = 'bold 11px Inter, sans-serif';
+                ctx2D.textAlign = 'center';
+                ctx2D.textBaseline = 'middle';
+                ctx2D.fillText(atom.type, atom.x, atom.y);
+            });
+
+            requestAnimationFrame(animate2DPhysics);
+        }
+
+        // Forces are updated continuously to simulate 3D molecules spatial structure
+        function applyForceLayout() {
+            if (atoms.length === 0) return;
+
+            // 1. Repulsion between ALL atoms (prevent collapsing)
+            for (let i = 0; i < atoms.length; i++) {
+                for (let j = i + 1; j < atoms.length; j++) {
+                    const a = atoms[i];
+                    const b = atoms[j];
+
+                    let dx = a.x - b.x;
+                    let dy = a.y - b.y;
+                    let dz = a.z - b.z;
+                    let dist = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.1;
+
+                    // Stronger repulsion if too close
+                    if (dist < 150) {
+                        const force = K_REPULSION / (dist * dist);
+                        const fx = (dx / dist) * force;
+                        const fy = (dy / dist) * force;
+                        const fz = (dz / dist) * force;
+
+                        a.vx += fx; a.vy += fy; a.vz += fz;
+                        b.vx -= fx; b.vy -= fy; b.vz -= fz;
+                    }
+                }
+            }
+
+            // 2. Attraction of Bonds (act as elastic springs)
+            bonds.forEach(bond => {
+                const a = atoms.find(at => at.id === bond.source);
+                const b = atoms.find(at => at.id === bond.target);
+                if (!a || !b) return;
+
+                let dx = a.x - b.x;
+                let dy = a.y - b.y;
+                let dz = a.z - b.z;
+                let dist = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.1;
+
+                // Hooke's Law Spring Force
+                const displacement = dist - (L_SPRING * 30); // scale up physical bond length for 2D screen
+                const force = K_SPRING * displacement;
+
+                const fx = (dx / dist) * force;
+                const fy = (dy / dist) * force;
+                const fz = (dz / dist) * force;
+
+                a.vx -= fx; a.vy -= fy; a.vz -= fz;
+                b.vx += fx; b.vy += fy; b.vz += fz;
+            });
+
+            // 3. Move atoms using forces with boundary constraints
+            const widthLimit = canvas2D.width;
+            const heightLimit = canvas2D.height;
+
+            atoms.forEach(atom => {
+                atom.vx *= damping;
+                atom.vy *= damping;
+                atom.vz *= damping;
+
+                atom.x += atom.vx;
+                atom.y += atom.vy;
+                atom.z += atom.vz;
+
+                // Restrict atoms to viewport boundary limits in 2D space
+                if (atom.x < 30) { atom.x = 30; atom.vx = 0; }
+                if (atom.x > widthLimit - 30) { atom.x = widthLimit - 30; atom.vx = 0; }
+                if (atom.y < 30) { atom.y = 30; atom.vy = 0; }
+                if (atom.y > heightLimit - 30) { atom.y = heightLimit - 30; atom.vy = 0; }
+            });
+        }
+
+        // Initialize real 3D Three.js scene
+        function init3D() {
+            const container = document.getElementById('canvas-3d-container');
+            const canvas3D = document.getElementById('canvas-3d');
+
+            // Scene creation
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color('#0b0c10');
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 15);
+
+            // Renderer configuration
+            renderer = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+
+            // Fluid Orbital controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1.0;
+
+            // Environmental lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight1.position.set(10, 15, 10);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x3b82f6, 0.3); // Cyber blue backlight
+            dirLight2.position.set(-10, -10, -10);
+            scene.add(dirLight2);
+        }
+
+        function resize3DViewport() {
+            const container = document.getElementById('canvas-3d-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function set3DStyle(style) {
+            style3D = style;
+            document.getElementById('btn-style-ballstick').className = (style === 'ballstick') 
+                ? "px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-400 transition-all"
+                : "px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+            
+            document.getElementById('btn-style-spacefill').className = (style === 'spacefill')
+                ? "px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-400 transition-all"
+                : "px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+
+            sync3DModel();
+        }
+
+        // --- STREAMING_CHUNK: Synchronizing 2D Atoms Graph to 3D meshes ---
+        function sync3DModel() {
+            // Remove existing meshes
+            threeAtoms.forEach(obj => scene.remove(obj));
+            threeBonds.forEach(obj => scene.remove(obj));
+            threeAtoms = [];
+            threeBonds = [];
+
+            if (atoms.length === 0) return;
+
+            // Determine rendering scale
+            const isSpaceFill = (style3D === 'spacefill');
+
+            // Find center of coordinates to translate coordinates nicely in 3D center
+            let avgX = 0, avgY = 0, avgZ = 0;
+            atoms.forEach(a => {
+                avgX += a.x;
+                avgY += a.y;
+                avgZ += a.z;
+            });
+            avgX /= atoms.length;
+            avgY /= atoms.length;
+            avgZ /= atoms.length;
+
+            // Create Atom spheres
+            atoms.forEach(atom => {
+                let radius = 0.55; // default C
+                if (atom.type === 'H') radius = isSpaceFill ? 1.0 : 0.35;
+                else if (atom.type === 'O') radius = isSpaceFill ? 1.35 : 0.50;
+                else if (atom.type === 'N') radius = isSpaceFill ? 1.40 : 0.52;
+                else if (atom.type === 'C') radius = isSpaceFill ? 1.50 : 0.58;
+
+                const geom = new THREE.SphereGeometry(radius, 32, 32);
+                const mat = new THREE.MeshPhongMaterial({
+                    color: new THREE.Color(CPK_COLORS[atom.type] || '#fff'),
+                    shininess: 90,
+                    specular: 0x444444
+                });
+                const mesh = new THREE.Mesh(geom, mat);
+
+                // Convert 2D pixel space to webgl units
+                mesh.position.x = (atom.x - avgX) / 25;
+                mesh.position.y = -(atom.y - avgY) / 25; // invert Y for webgl
+                mesh.position.z = (atom.z - avgZ) / 25;
+
+                // Save dynamic properties for position tracking during simulation
+                mesh.userData = { atomId: atom.id };
+
+                scene.add(mesh);
+                threeAtoms.push(mesh);
+            });
+
+            // Create bonds (only in ball-and-stick mode)
+            if (!isSpaceFill) {
+                bonds.forEach(bond => {
+                    const sMesh = threeAtoms.find(m => m.userData.atomId === bond.source);
+                    const tMesh = threeAtoms.find(m => m.userData.atomId === bond.target);
+                    if (sMesh && tMesh) {
+                        create3DCylinderBond(sMesh.position, tMesh.position);
+                    }
+                });
+            }
+        }
+
+        // Helper function to build 3D sticks joining sphere centers
+        function create3DCylinderBond(posStart, posEnd) {
+            const distance = posStart.distanceTo(posEnd);
+            const cylinderGeom = new THREE.CylinderGeometry(0.12, 0.12, distance, 16);
+            const cylinderMat = new THREE.MeshPhongMaterial({ color: 0x888888, shininess: 80 });
+            const cylinder = new THREE.Mesh(cylinderGeom, cylinderMat);
+
+            // Rotate and translate cylinder to connect start and end
+            const position = posEnd.clone().add(posStart).multiplyScalar(0.5);
+            cylinder.position.copy(position);
+
+            const direction = new THREE.Vector3().subVectors(posEnd, posStart);
+            direction.normalize();
+
+            const alignAxis = new THREE.Vector3(0, 1, 0); // standard cylinder faces upward
+            cylinder.quaternion.setFromUnitVectors(alignAxis, direction);
+
+            scene.add(cylinder);
+            threeBonds.push(cylinder);
+        }
+
+        // --- STREAMING_CHUNK: Weisfeiler-Lehman / Morgan-1 Fingerprint topological matcher ---
+        function getMorganSignature() {
+            if (atoms.length === 0) return "";
+            
+            // Generate adjacency lists
+            const adj = {};
+            atoms.forEach(a => adj[a.id] = []);
+            bonds.forEach(b => {
+                if (adj[b.source] !== undefined && adj[b.target] !== undefined) {
+                    adj[b.source].push(b.target);
+                    adj[b.target].push(b.source);
+                }
+            });
+
+            // Calculate environment string of each atom based on directly connected neighbor elements
+            const envs = atoms.map(a => {
+                const neighborTypes = adj[a.id].map(nId => {
+                    const neighbor = atoms.find(at => at.id === nId);
+                    return neighbor ? neighbor.type : '?';
+                }).sort(); // Sort alphabetically (e.g., C, H, H)
+                return `${a.type}[${neighborTypes.join(',')}]`;
+            });
+
+            // Sort all environment strings alphabetically to achieve graph-isomorphic canonical invariance
+            envs.sort();
+            return envs.join('|');
+        }
+
+        // Filter challenges list based on category selector
+        function filterChallenges(category) {
+            const selectEl = document.getElementById('challenge-selector');
+            selectEl.innerHTML = "";
+            
+            activeChallenges = CHALLENGES.filter(c => category === 'all' || c.category === category);
+            
+            activeChallenges.forEach((challenge, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `${challenge.formula} - ${challenge.title}`;
+                selectEl.appendChild(opt);
+            });
+
+            document.getElementById('score-counter').innerText = `${score} / ${CHALLENGES.length}`;
+
+            if (activeChallenges.length > 0) {
+                loadChallenge(0);
+            }
+        }
+
+        // Load active challenge info
+        function loadChallenge(index) {
+            currentChallengeIndex = index;
+            const challenge = activeChallenges[index];
+            if (!challenge) return;
+            
+            document.getElementById('challenge-target-formula').innerText = challenge.formula;
+            document.getElementById('challenge-title').innerText = challenge.title;
+            document.getElementById('challenge-desc').innerText = challenge.desc;
+        }
+
+        // Dynamic validation using computed Morgan Fingerprints
+        function verifyStructureIsomer(targetSig) {
+            if (atoms.length === 0) return false;
+
+            // Connectivity validation: Ensure all atoms are part of a single unified graph component
+            if (!isSingleComponent()) {
+                showToast("Struktur terputus: Pastikan semua atom saling terhubung!", true);
+                return false;
+            }
+
+            // Calculate current graph signature
+            const currentSig = getMorganSignature();
+            return currentSig === targetSig;
+        }
+
+        // Utility: Check if all atoms are fully connected (No independent floating atoms)
+        function isSingleComponent() {
+            if (atoms.length === 0) return false;
+            const visited = new Set();
+            const queue = [atoms[0].id];
+            visited.add(atoms[0].id);
+
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                bonds.forEach(b => {
+                    if (b.source === curr && !visited.has(b.target)) {
+                        visited.add(b.target);
+                        queue.push(b.target);
+                    }
+                    if (b.target === curr && !visited.has(b.source)) {
+                        visited.add(b.source);
+                        queue.push(b.source);
+                    }
+                });
+            }
+            return visited.size === atoms.length;
+        }
+
+        function checkChallenge() {
+            const challenge = activeChallenges[currentChallengeIndex];
+            if (!challenge) return;
+
+            const success = verifyStructureIsomer(challenge.sig);
+
+            if (success) {
+                showToast(`Verifikasi Berhasil! Struktur ${challenge.formula} (${challenge.title}) cocok! 🎉`);
+                score++;
+                document.getElementById('score-counter').innerText = `${score} / ${CHALLENGES.length}`;
+                
+                // Advance to next challenge
+                if (currentChallengeIndex < activeChallenges.length - 1) {
+                    setTimeout(() => {
+                        document.getElementById('challenge-selector').value = currentChallengeIndex + 1;
+                        loadChallenge(currentChallengeIndex + 1);
+                    }, 2500);
+                } else {
+                    setTimeout(() => {
+                        showToast("Misi Selesai! Kamu telah menyelesaikan semua variasi molekul! 🏆");
+                    }, 3000);
+                }
+            } else {
+                showToast("Struktur tidak sesuai atau belum stabil secara kovalen. Periksa kembali sambungan atom!", true);
+            }
+        }
+
+        // --- STREAMING_CHUNK: Integrating Dynamic AI Custom Challenges Generator ---
+        async function triggerCustomAIMission() {
+            const queryName = prompt("Masukkan nama senyawa organik bebas yang ingin kamu rakit (Contoh: Asam Laktat, Sikloheksana, Benzena, Asetilena, Propanal):");
+            if (!queryName || queryName.trim() === "") return;
+
+            showToast(`Menghubungi AI untuk menganalisis rumus & struktur ${queryName}...`);
+
+            const customSystemInstruction = `Anda adalah Asisten Ahli Kimia MOLECOOL AI. Tugas Anda adalah membantu pengguna menghasilkan data JSON valid untuk misi perakitan kustom senyawa yang diminta pengguna.
+            Anda wajib membalas HANYA dengan format raw JSON berikut tanpa tambahan teks atau markdown wrapper:
+            {
+              "formula": "Rumus molekul (misal: C3H6O3)",
+              "title": "Nama Kimia/IUPAC",
+              "desc": "Petunjuk perakitan rantai atom kovalen yang ringkas.",
+              "sig": "Deskripsi Morgan-1 Signature topologi senyawa secara akurat. Format ini mendaftarkan setiap atom beserta tetangga langsungnya secara berurutan alfabetis di dalam tanda kurung siku, dipisah karakter '|', dan diurutkan secara alfabetis. Contoh Air (H2O): H[O]|H[O]|O[H,H]. Contoh Metanol (CH4O): C[H,H,H,O]|H[C]|H[C]|H[C]|H[O]|O[C,H]"
+            }`;
+
+            const promptText = `Hasilkan modul misi kustom Isomer Hunter untuk senyawa: "${queryName}"`;
+
+            try {
+                const aiResult = await fetchGeminiAPI(promptText, customSystemInstruction);
+                // Extract clean JSON text
+                let cleanJSON = aiResult.replace(/```json/g, '').replace(/```/g, '').trim();
+                const customMission = JSON.parse(cleanJSON);
+
+                // Add to challenges list
+                customMission.category = "kustom";
+                CHALLENGES.push(customMission);
+
+                // Automatically switch to custom view & load it
+                document.getElementById('challenge-category').value = "all";
+                filterChallenges('all');
+                
+                // Find index of newly added challenge
+                const newIdx = activeChallenges.findIndex(c => c.title === customMission.title && c.formula === customMission.formula);
+                if (newIdx !== -1) {
+                    document.getElementById('challenge-selector').value = newIdx;
+                    loadChallenge(newIdx);
+                }
+
+                showToast(`Misi kustom AI baru berhasil dibuat: ${customMission.title}! 🧪`);
+            } catch (error) {
+                console.error("AI Custom Mission creation failed:", error);
+                showToast("AI gagal memformulasikan senyawa tersebut. Pastikan ejaan benar atau coba senyawa lain.", true);
+            }
+        }
+
+        // Elegant toast popup notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-alert');
+            const msgEl = document.getElementById('toast-message');
+            
+            msgEl.innerText = message;
+            
+            if (isError) {
+                toast.firstElementChild.className = "bg-rose-500/10 border border-rose-500/30 text-rose-300 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md";
+                toast.firstElementChild.firstElementChild.className = "fa-solid fa-circle-exclamation text-rose-400 text-lg";
+            } else {
+                toast.firstElementChild.className = "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md";
+                toast.firstElementChild.firstElementChild.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+            }
+
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+            }, 3500);
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            // Sync WebGL positioning dynamically with 2D simulated positions
+            if (atoms.length > 0) {
+                let avgX = 0, avgY = 0, avgZ = 0;
+                atoms.forEach(a => { avgX += a.x; avgY += a.y; avgZ += a.z; });
+                avgX /= atoms.length;
+                avgY /= atoms.length;
+                avgZ /= atoms.length;
+
+                threeAtoms.forEach(mesh => {
+                    const id = mesh.userData.atomId;
+                    const atom = atoms.find(a => a.id === id);
+                    if (atom) {
+                        mesh.position.x = (atom.x - avgX) / 25;
+                        mesh.position.y = -(atom.y - avgY) / 25;
+                        mesh.position.z = (atom.z - avgZ) / 25;
+                    }
+                });
+
+                // Recreate and re-align dynamic cylinder bonds to follow moved atom coordinates
+                if (style3D !== 'spacefill') {
+                    threeBonds.forEach(obj => scene.remove(obj));
+                    threeBonds = [];
+                    bonds.forEach(bond => {
+                        const sMesh = threeAtoms.find(m => m.userData.atomId === bond.source);
+                        const tMesh = threeAtoms.find(m => m.userData.atomId === bond.target);
+                        if (sMesh && tMesh) {
+                            create3DCylinderBond(sMesh.position, tMesh.position);
+                        }
+                    });
+                }
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
