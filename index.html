@@ -53,59 +53,46 @@
     <!-- WELCOME SPLASH PAGE (HALAMAN PENGENALAN)   -->
     <!-- ========================================== -->
     <div id="splash-page" class="fixed inset-0 bg-[#0d0f14] z-50 flex flex-col items-center justify-center p-6 overflow-y-auto">
-        <!-- Decorative background glow effect -->
         <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div class="max-w-4xl w-full text-center relative z-10 space-y-8 my-auto">
-            <!-- Brand Logo Animation -->
             <div class="inline-flex bg-gradient-to-tr from-emerald-500 to-teal-400 p-4 rounded-2xl shadow-xl shadow-emerald-500/10 mb-2 animate-bounce">
                 <i class="fa-solid fa-circle-nodes text-4xl text-slate-900"></i>
             </div>
             
-            <!-- Main Typography Heading -->
             <div class="space-y-3">
                 <h1 class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                     Eksplorasi Dunia Kimia Organik dalam 3D
                 </h1>
                 <p class="text-base md:text-lg text-slate-400 max-w-2xl mx-auto font-light">
-                    Selamat datang di <strong class="text-emerald-400 font-semibold">MOLECOOL AI</strong>. Platform simulasi interaktif untuk merancang struktur molekul kovalen secara 2D dan memproyeksikannya langsung ke bentuk geometri ruang 3D secara real-time.
+                    Selamat datang di <strong class="text-emerald-400 font-semibold">MOLECOOL</strong>. Platform simulasi interaktif untuk merancang struktur molekul dan memahami dampaknya bagi lingkungan kita.
                 </p>
             </div>
 
-            <!-- Feature Showcase Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto text-left mt-6">
-                <!-- Card 1 -->
                 <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-xl">
                     <div class="text-emerald-400 text-lg mb-2"><i class="fa-solid fa-pen-nib"></i></div>
                     <h3 class="text-sm font-bold text-slate-200">2D Topology Builder</h3>
                     <p class="text-xs text-slate-400 mt-1 leading-relaxed">Gambarkan kerangka atom (C, H, O, N) secara intuitif hanya dengan klik dan drag untuk membentuk ikatan kovalen.</p>
                 </div>
-                <!-- Card 2 -->
                 <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-xl">
                     <div class="text-teal-400 text-lg mb-2"><i class="fa-solid fa-cube"></i></div>
                     <h3 class="text-sm font-bold text-slate-200">Real-time 3D Projection</h3>
-                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Lihat konformasi struktur molekul nyata melalui simulasi gaya tolak-menolak antar atom (Force Layout) secara instan.</p>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Lihat konformasi struktur molekul nyata melalui simulasi gaya tolak-menolak antar atom secara instan.</p>
                 </div>
-                <!-- Card 3 -->
                 <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-xl">
-                    <div class="text-amber-400 text-lg mb-2"><i class="fa-solid fa-crosshairs"></i></div>
-                    <h3 class="text-sm font-bold text-slate-200">Isomer Hunter & AI</h3>
-                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Selesaikan tantangan 35+ jenis isomer molekul atau minta Asisten Kecerdasan Buatan (AI) mengevaluasi struktur buatanmu.</p>
+                    <div class="text-amber-400 text-lg mb-2"><i class="fa-solid fa-earth-asia"></i></div>
+                    <h3 class="text-sm font-bold text-slate-200">Peduli Lingkungan</h3>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Selesaikan misi isomer molekul dan temukan fakta-fakta unik tentang senyawa kimia di sekitar kita.</p>
                 </div>
             </div>
 
-            <!-- Call To Action Button -->
             <div class="pt-4">
                 <button onclick="enterWorkspace()" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 text-base font-extrabold rounded-2xl shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-105 active:scale-95 group flex items-center gap-3 mx-auto">
                     Mulai Eksplorasi Laboratorium <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
                 </button>
             </div>
-        </div>
-
-        <!-- Footer Info -->
-        <div class="absolute bottom-6 text-center z-10">
-            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-mono">v2.0.26 • Didukung oleh WebGL & Gemini Flash</p>
         </div>
     </div>
 
@@ -113,8 +100,6 @@
     <!-- ========================================== -->
     <!-- MAIN WORKSPACE APPLICATION                 -->
     <!-- ========================================== -->
-    
-    <!-- Top Premium Navigation Bar -->
     <header class="bg-[#11141d]/90 border-b border-slate-800/80 px-6 py-4 flex items-center justify-between backdrop-blur-md shrink-0">
         <div class="flex items-center gap-3">
             <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2.5 rounded-xl shadow-lg shadow-emerald-500/10">
@@ -122,13 +107,12 @@
             </div>
             <div>
                 <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
-                    MOLECOOL AI
+                    MOLECOOL
                 </h1>
                 <p class="text-xs text-slate-400">2D Backbone Builder & Real-time 3D Projection</p>
             </div>
         </div>
 
-        <!-- Real-time formula display -->
         <div class="flex items-center gap-4 bg-slate-900/60 border border-slate-800 px-4 py-2 rounded-xl">
             <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Formula Saat Ini:</span>
             <span id="formula-badge" class="mono-font text-lg font-bold text-emerald-400">H₂O</span>
@@ -141,12 +125,10 @@
         </div>
     </header>
 
-    <!-- Main Interactive Workspace -->
     <main class="flex-1 flex overflow-hidden">
         
         <!-- LEFT: 2D Backbone Builder -->
         <section class="w-[45%] border-r border-slate-800/80 flex flex-col bg-[#0e1118]">
-            <!-- Tool Ribbon for 2D actions -->
             <div class="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
                     <button id="tool-atom-C" onclick="selectAtomTool('C')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-slate-800 text-emerald-400 border border-emerald-500/30">
@@ -173,10 +155,8 @@
                 </div>
             </div>
 
-            <!-- Canvas Container -->
             <div class="flex-1 relative overflow-hidden bg-slate-950/40" id="canvas-2d-container">
                 <canvas id="canvas-2d" class="w-full h-full cursor-crosshair"></canvas>
-                <!-- UI Tooltip Guide -->
                 <div class="absolute bottom-4 left-4 right-4 bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex items-center gap-3 pointer-events-none backdrop-blur-sm">
                     <i class="fa-solid fa-info-circle text-emerald-400 text-sm"></i>
                     <p class="text-xs text-slate-300">
@@ -191,7 +171,6 @@
         <!-- RIGHT: 3D Real-time Viewer -->
         <section class="w-[55%] flex flex-col bg-[#0b0c10] relative">
             
-            <!-- Real-time status / Alert overlay -->
             <div id="toast-alert" class="absolute top-4 left-4 right-4 z-10 transition-all duration-300 transform translate-y-[-100px] opacity-0 pointer-events-none">
                 <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
                     <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
@@ -199,7 +178,6 @@
                 </div>
             </div>
 
-            <!-- Isomer Hunter / Gamification Dashboard -->
             <div class="p-5 bg-slate-900/30 border-b border-slate-800/80 shrink-0">
                 <div class="flex items-start justify-between">
                     <div class="flex-1 mr-4">
@@ -213,7 +191,6 @@
                         </div>
                         <p class="text-xs text-slate-400 mt-0.5">Rakit struktur yang diminta untuk menyelesaikan misi belajar.</p>
                         
-                        <!-- Category Filter and Select Challenge -->
                         <div class="flex flex-wrap items-center gap-2 mt-3">
                             <select id="challenge-category" onchange="filterChallenges(this.value)" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-emerald-500">
                                 <option value="all">Semua Misi (35+)</option>
@@ -224,12 +201,7 @@
                             </select>
                             
                             <select id="challenge-selector" onchange="loadChallenge(parseInt(this.value))" class="flex-1 min-w-[150px] bg-slate-950 border border-slate-800 text-slate-100 text-xs px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-emerald-500 font-medium">
-                                <!-- Populated dynamically -->
                             </select>
-
-                            <button onclick="triggerCustomAIMission()" class="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-robot"></i> Kustom AI
-                            </button>
                         </div>
                     </div>
                     
@@ -242,7 +214,6 @@
                     </div>
                 </div>
 
-                <!-- Active Challenge Indicator -->
                 <div class="mt-4 bg-[#131722]/80 border border-slate-800/80 rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-4 flex-1 mr-4">
                         <div class="bg-amber-400/10 text-amber-400 border border-amber-400/20 p-2.5 rounded-xl text-center min-w-[70px]">
@@ -268,7 +239,6 @@
                     </div>
                 </div>
 
-                <!-- Style settings on viewport overlay -->
                 <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
                     <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800/80 backdrop-blur-sm">
                         <button id="btn-style-ballstick" onclick="set3DStyle('ballstick')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-400 transition-all">
@@ -280,62 +250,17 @@
                     </div>
                 </div>
 
-                <!-- The Interactive 3D Canvas -->
                 <canvas id="canvas-3d" class="w-full h-full"></canvas>
 
-                <!-- Glowing Floating AI Assistant Trigger -->
-                <button onclick="toggleAIDrawer(true)" class="absolute bottom-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 group">
-                    <span class="relative flex h-2.5 w-2.5">
+                <!-- NEW: Glowing Floating Fun Fact Trigger Button -->
+                <button onclick="tampilkanFaktaLingkungan()" class="absolute bottom-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-3 transition-all hover:scale-105 active:scale-95 group">
+                    <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-900"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-slate-900"></span>
                     </span>
-                    <i class="fa-solid fa-wand-magic-sparkles text-sm animate-bounce"></i> Asisten Kimia AI
+                    <i class="fa-solid fa-leaf text-base animate-bounce"></i> Fakta Lingkungan
                 </button>
 
-                <!-- Slide-out AI Chemist Drawer -->
-                <div id="ai-drawer" class="absolute top-0 right-0 h-full w-96 bg-slate-950/95 border-l border-slate-800/80 transition-transform duration-300 transform translate-x-full z-20 flex flex-col backdrop-blur-md shadow-2xl shadow-emerald-500/10">
-                    <!-- Drawer Header -->
-                    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-robot text-emerald-400 text-lg"></i>
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-100">Asisten Kimia AI</h3>
-                                <p class="text-[10px] text-slate-400">Model: gemini-3-flash-preview</p>
-                            </div>
-                        </div>
-                        <button onclick="toggleAIDrawer(false)" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-
-                    <!-- AI Chat & Output Container -->
-                    <div class="flex-1 overflow-y-auto p-4 space-y-4" id="ai-chat-container">
-                        <!-- Welcome Chat Bubble -->
-                        <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-3 text-xs leading-relaxed text-slate-300">
-                            <p class="font-bold text-emerald-400 mb-1">Halo Rekan Peneliti! 🧪🔬</p>
-                            Saya adalah asisten virtual lab Anda. Gambarlah struktur organik di kanvas sebelah kiri, lalu klik tombol analisis di bawah untuk memeriksa kestabilan serta kegunaannya, atau ketik pertanyaan apa saja di kolom chat!
-                        </div>
-                        <!-- Placeholder for loading dynamic analysis -->
-                        <div id="ai-analysis-output" class="hidden"></div>
-                    </div>
-
-                    <!-- Drawer Action Ribbon -->
-                    <div class="p-3 border-t border-slate-800/60 bg-slate-950/50 flex flex-col gap-2 shrink-0">
-                        <button onclick="analyzeCurrentStructure()" class="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass-chart"></i> Analisis Struktur Saat Ini
-                        </button>
-                        
-                        <!-- Chat Input Form -->
-                        <form onsubmit="handleAIChatSubmit(event)" class="flex gap-2 mt-1">
-                            <input type="text" id="ai-chat-input" placeholder="Tanya tentang reaksi, properti..." class="flex-1 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500 placeholder-slate-500">
-                            <button type="submit" class="px-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-lg text-xs font-bold transition flex items-center justify-center">
-                                <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Color legend overlaid dynamically -->
                 <div class="absolute bottom-4 left-4 bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 flex flex-col gap-2.5 backdrop-blur-md">
                     <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Standard Warna CPK</p>
                     <div class="flex flex-col gap-2 text-xs">
@@ -384,14 +309,27 @@
                     <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Kontrol Navigasi 3D</h4>
                     <p class="text-xs text-slate-400 pl-3">Gunakan drag mouse kiri untuk memutar kamera, drag mouse kanan untuk menggeser, dan scroll mouse untuk melakukan zoom.</p>
                 </div>
-                <div>
-                    <h4 class="font-bold text-slate-100 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Menyelesaikan Isomer Hunter</h4>
-                    <p class="text-xs text-slate-400 pl-3">Pilih kategori di menu atas, pilih target molekul kustom dari dropdown, atau minta asisten AI merumuskan misi molekul acak kustom Anda!</p>
-                </div>
             </div>
             
             <button onclick="toggleHelpModal(false)" class="mt-6 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
                 Mulai Eksplorasi
+            </button>
+        </div>
+    </div>
+
+    <!-- NEW: Pop-up Fun Fact Lingkungan Modal -->
+    <div id="funFactModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-[60] transition-all duration-300 opacity-0 pointer-events-none">
+        <div class="bg-slate-900 border-2 border-emerald-500 max-w-md w-full rounded-2xl p-8 shadow-2xl relative text-center">
+            <button onclick="tutupFaktaLingkungan()" class="absolute top-4 right-4 text-slate-400 hover:text-rose-400 transition text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="inline-flex bg-gradient-to-tr from-emerald-500 to-teal-400 p-4 rounded-full shadow-lg mb-5 animate-pulse">
+                <i class="fa-solid fa-earth-asia text-4xl text-slate-900"></i>
+            </div>
+            <h3 class="text-2xl font-black text-emerald-400 mb-4 tracking-tight">Tahukah Kamu?</h3>
+            <p id="teksFunFact" class="text-sm text-slate-200 leading-relaxed font-medium">Teks fakta akan muncul di sini.</p>
+            <button onclick="tutupFaktaLingkungan()" class="mt-8 px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold rounded-xl transition-all w-full shadow-lg">
+                Wah, Keren! 💡
             </button>
         </div>
     </div>
@@ -402,18 +340,37 @@
         let bonds = [];
         let selectedAtomTool = 'C';
         let dragStartAtom = null;
-        let style3D = 'ballstick'; // 'ballstick' | 'spacefill'
+        let style3D = 'ballstick';
         let currentChallengeIndex = 0;
         let score = 0;
 
-        // Gemini API Configuration & Backoff Logic
-        const GEMINI_API_KEY = ""; // Kept empty for system injection
-        const GEMINI_MODEL = "gemini-3-flash-preview";
-        const GEMINI_SYSTEM_INSTRUCTION = "Anda adalah Asisten Ahli Kimia Komputasi MOLEKULA 3D. Tugas Anda adalah menganalisis struktur senyawa kimia organik yang digambar pengguna di kanvas. Pengguna akan mengirimkan data geometri senyawa dalam format JSON (daftar atom dan daftar koneksi ikatan kovalen) beserta rumus kimianya. Anda harus memvalidasi kestabilan molekul tersebut menurut aturan oktet dan struktur valensi standar kimia organik (Karbon memiliki valensi 4, Hidrogen memiliki valensi 1, Oksigen memiliki valensi 2, Nitrogen memiliki valensi 3). Berikan evaluasi apakah molekul tersebut stabil, berikan estimasi nama IUPAC atau nama umumnya, dan jelaskan karakteristik fisik, kegunaan praktis, serta bahaya keselamatannya dalam Bahasa Indonesia yang edukatif, ringkas, dan ramah. Gunakan format Markdown (bold, list, sub-heading) yang rapi untuk rendering HTML.";
+        // --- NEW: FAKTA LINGKUNGAN DATABASE ---
+        const faktaLingkungan = [
+            "Plastik yang sering kita pakai sehari-hari sebenarnya terbuat dari polimer senyawa turunan minyak bumi, lho! Ayo kurangi pemakaian plastik agar bumi kita lebih sehat.",
+            "Dibutuhkan waktu hingga 500 tahun agar satu botol air mineral plastik bisa hancur menyatu dengan tanah. Yuk, mulai biasakan bawa tumbler sendiri!",
+            "Minyak bumi berasal dari sisa-sisa fosil makhluk hidup purba, seperti plankton dan alga, yang terkubur di dasar laut selama jutaan tahun.",
+            "Gas metana (CH4) yang sering dihasilkan dari tumpukan sampah organik juga termasuk senyawa hidrokarbon. Metana adalah gas rumah kaca penyumbang pemanasan global!",
+            "Banyak mainan anak-anak terbuat dari turunan plastik. Merawat mainan agar tidak cepat rusak dan membuangnya di tempat daur ulang sangat membantu lingkungan!",
+            "Mendaur ulang satu botol plastik bisa menghemat energi yang cukup untuk menyalakan lampu belajarmu selama lebih dari 3 jam!",
+            "Styrofoam (polistirena) yang sering jadi bungkus makanan adalah turunan minyak bumi yang sangat sulit didaur ulang oleh alam. Mari kurangi penggunaannya!"
+        ];
+
+        function tampilkanFaktaLingkungan() {
+            const modal = document.getElementById('funFactModal');
+            const teksFakta = document.getElementById('teksFunFact');
+            const faktaAcak = faktaLingkungan[Math.floor(Math.random() * faktaLingkungan.length)];
+            
+            teksFakta.innerText = faktaAcak;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function tutupFaktaLingkungan() {
+            const modal = document.getElementById('funFactModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
 
         // --- CHALLENGES DATABASE ---
         const CHALLENGES = [
-            // ALKANA & ALKENA
             { category: 'alkana', formula: 'H2O', title: 'Molekul Air Sederhana', desc: 'Hubungkan 1 atom Oksigen dengan 2 atom Hidrogen.', sig: 'H[O]|H[O]|O[H,H]' },
             { category: 'alkana', formula: 'CH4', title: 'Metana', desc: 'Hubungkan 1 atom Karbon pusat dengan 4 atom Hidrogen.', sig: 'C[H,H,H,H]|H[C]|H[C]|H[C]|H[C]' },
             { category: 'alkana', formula: 'C2H6', title: 'Etana', desc: 'Rantai jenuh 2 Karbon (C-C) dengan 6 atom Hidrogen.', sig: 'C[C,H,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
@@ -423,14 +380,12 @@
             { category: 'alkana', formula: 'C2H4', title: 'Etena (Etilena)', desc: 'Hubungkan 2 Karbon dengan ikatan ganda. Pastikan sisa ikatan dipenuhi Hidrogen (4 total).', sig: 'C[C,C,H,H]|C[C,C,H,H]|H[C]|H[C]|H[C]|H[C]' },
             { category: 'alkana', formula: 'C3H6', title: 'Propena', desc: 'Rantai 3 karbon yang memiliki satu ikatan ganda (C=C-C).', sig: 'C[C,C,H,H]|C[C,C,H,H]|C[C,H,H,H]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]' },
             
-            // ALKOHOL & ETER (OKSIGENASI)
             { category: 'oksigenasi', formula: 'CH4O', title: 'Metanol', desc: 'Karbon mengikat Oksigen (C-O), dengan Oksigen mengikat Hidrogen (gugus hidroksil).', sig: 'C[H,H,H,O]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
             { category: 'oksigenasi', formula: 'C2H6O', title: 'Etanol', desc: 'Molekul alkohol dalam minuman: Susunan rantai C-C-O, lalu saturasi dengan Hidrogen.', sig: 'C[C,H,H,H]|C[C,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
             { category: 'oksigenasi', formula: 'C2H6O', title: 'Dimetil Eter (Isomer Etanol)', desc: 'Oksigen berada di tengah menjembatani 2 Karbon (C-O-C).', sig: 'C[H,H,H,O]|C[H,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
             { category: 'oksigenasi', formula: 'C3H8O', title: '1-Propanol', desc: 'Alkohol berantai lurus 3 Karbon dengan Oksigen di ujung (C-C-C-O-H).', sig: 'C[C,C,H,H]|C[C,H,H,H]|C[C,H,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
             { category: 'oksigenasi', formula: 'C3H8O', title: '2-Propanol (Isopropanol)', desc: 'Oksigen terikat pada Karbon tengah (C-C(OH)-C). Pelarut antiseptik populer.', sig: 'C[C,H,H,H]|C[C,H,H,H]|C[C,C,H,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|H[O]|O[C,H]' },
             
-            // KARBONIL & ASAM
             { category: 'karbonil', formula: 'CH2O', title: 'Formaldehida (Metanal)', desc: 'Karbon mengikat ganda 1 Oksigen, serta mengikat 2 Hidrogen.', sig: 'C[H,H,O,O]|H[C]|H[C]|O[C,C]' },
             { category: 'karbonil', formula: 'C2H4O', title: 'Asetaldehida (Etanal)', desc: 'Hubungkan rantai C-C, di mana salah satu C mengikat ganda Oksigen (C=O).', sig: 'C[C,H,H,H]|C[C,H,O,O]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
             { category: 'karbonil', formula: 'C3H6O', title: 'Aseton (Propanon)', desc: 'Rantai 3 Karbon di mana Karbon tengah mengikat ganda Oksigen (C-C(=O)-C).', sig: 'C[C,H,H,H]|C[C,H,H,H]|C[C,C,O,O]|H[C]|H[C]|H[C]|H[C]|H[C]|H[C]|O[C,C]' },
@@ -438,7 +393,6 @@
             { category: 'karbonil', formula: 'C2H4O2', title: 'Asam Asetat (Cuka)', desc: 'Rakit rantai C-C, salah satu Karbon mengikat ganda O dan tunggal O-H.', sig: 'C[C,H,H,H]|C[C,O,O,O]|H[C]|H[C]|H[C]|H[O]|O[C,C]|O[C,H]' },
             { category: 'karbonil', formula: 'C2H4O2', title: 'Metil Format (Isomer Cuka)', desc: 'Sebuah Ester sederhana dengan pola ikatan C-O-C(=O)-H.', sig: 'C[H,H,H,O]|C[H,O,O,O]|H[C]|H[C]|H[C]|H[C]|O[C,C]|O[C,C]' },
             
-            // NITROGEN & LAINNYA
             { category: 'nitrogen', formula: 'NH3', title: 'Amonia', desc: 'Hubungkan 1 atom Nitrogen dengan 3 atom Hidrogen.', sig: 'H[N]|H[N]|H[N]|N[H,H,H]' },
             { category: 'nitrogen', formula: 'CH5N', title: 'Metilamina', desc: 'Hubungkan gugus Metil ke Nitrogen (C-N) lalu saturasi dengan Hidrogen.', sig: 'C[H,H,H,N]|H[C]|H[C]|H[C]|H[N]|H[N]|N[C,H,H]' },
             { category: 'nitrogen', formula: 'CH3NO', title: 'Formamida', desc: 'Karbon mengikat ganda Oksigen dan mengikat tunggal Nitrogen.', sig: 'C[H,N,O,O]|H[C]|H[N]|H[N]|N[C,H,H]|O[C,C]' },
@@ -451,172 +405,7 @@
         function enterWorkspace() {
             const splash = document.getElementById('splash-page');
             splash.classList.add('fade-out');
-            
-            // Fully remove from DOM tree after fade transitions finish
-            setTimeout(() => {
-                splash.style.display = 'none';
-            }, 600);
-        }
-
-        // --- GEMINI API INTELLIGENCE ---
-        async function fetchGeminiAPI(prompt, systemPrompt = GEMINI_SYSTEM_INSTRUCTION, retries = 3, delay = 1000) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    if (response.status === 429 && retries > 0) {
-                        console.warn(`Gemini API rate limited (429). Retrying in ${delay}ms...`);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        return fetchGeminiAPI(prompt, systemPrompt, retries - 1, delay * 2);
-                    }
-                    throw new Error(`API returned HTTP ${response.status}`);
-                }
-
-                const result = await response.json();
-                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak dapat merumuskan analisis saat ini.";
-            } catch (error) {
-                if (retries > 0) {
-                    console.warn(`Request failed. Retrying... Attempts left: ${retries}`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    return fetchGeminiAPI(prompt, systemPrompt, retries - 1, delay * 2);
-                }
-                throw error;
-            }
-        }
-
-        function toggleAIDrawer(show) {
-            const drawer = document.getElementById('ai-drawer');
-            if (show) {
-                drawer.classList.remove('translate-x-full');
-            } else {
-                drawer.classList.add('translate-x-full');
-            }
-        }
-
-        function convertMarkdownToHTML(md) {
-            let html = md;
-            html = html.replace(/### (.*?)\n/g, '<h4 class="text-xs font-bold text-emerald-400 mt-2 mb-1">$1</h4>');
-            html = html.replace(/## (.*?)\n/g, '<h4 class="text-sm font-black text-emerald-400 mt-3 mb-1">$1</h4>');
-            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100 font-bold">$1</strong>');
-            html = html.replace(/^\* (.*?)$/gm, '<li class="ml-3 list-disc text-slate-300 py-0.5">$1</li>');
-            html = html.replace(/^- (.*?)$/gm, '<li class="ml-3 list-disc text-slate-300 py-0.5">$1</li>');
-            html = html.replace(/\n/g, '<br>');
-            return html;
-        }
-
-        function appendChatBubble(sender, content, isHTML = false) {
-            const container = document.getElementById('ai-chat-container');
-            const bubble = document.createElement('div');
-            
-            if (sender === 'ai') {
-                bubble.className = "bg-slate-900 border border-emerald-500/20 rounded-xl p-3 text-xs leading-relaxed text-slate-300 transition-all duration-300 animate-fadeIn";
-                if (isHTML) {
-                    bubble.innerHTML = content;
-                } else {
-                    bubble.innerHTML = convertMarkdownToHTML(content);
-                }
-            } else {
-                bubble.className = "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 self-end rounded-xl p-3 text-xs ml-8 leading-relaxed text-right";
-                bubble.innerText = content;
-            }
-
-            container.appendChild(bubble);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function analyzeCurrentStructure() {
-            if (atoms.length === 0) {
-                showToast("Kanvas 2D masih kosong! Silakan buat atom terlebih dahulu.", true);
-                return;
-            }
-
-            const currentFormula = document.getElementById('formula-badge').innerText;
-            const parsedAtoms = atoms.map(a => ({ id: a.id, element: a.type }));
-            const parsedBonds = bonds.map(b => {
-                const s = atoms.find(a => a.id === b.source);
-                const t = atoms.find(a => a.id === b.target);
-                return `${s?.type || '?'}-${t?.type || '?'}`;
-            });
-
-            appendChatBubble('ai', `
-                <div class="flex items-center gap-2 text-emerald-400">
-                    <i class="fa-solid fa-spinner animate-spin"></i>
-                    <span>Sedang merumuskan analisis struktur ${currentFormula}...</span>
-                </div>
-            `, true);
-
-            const prompt = `Analisis struktur ini:
-            Formula Molekul: ${currentFormula}
-            Daftar Atom Geometri (Atoms): ${JSON.stringify(parsedAtoms)}
-            Sambungan Kovalen (Bonds): ${JSON.stringify(parsedBonds)}
-            
-            Apakah struktur kovalen ini logis dan stabil secara organik? Apa kegunaannya dalam dunia nyata? Berikan analisis terperinci.`;
-
-            try {
-                const aiResult = await fetchGeminiAPI(prompt);
-                const container = document.getElementById('ai-chat-container');
-                if (container.lastChild) container.removeChild(container.lastChild);
-                appendChatBubble('ai', aiResult);
-            } catch (error) {
-                console.error("AI Analysis failed:", error);
-                const container = document.getElementById('ai-chat-container');
-                if (container.lastChild) container.removeChild(container.lastChild);
-                appendChatBubble('ai', `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation"></i> Gagal menghubungi Asisten AI. Coba beberapa saat lagi.</span>`, true);
-            }
-        }
-
-        async function handleAIChatSubmit(event) {
-            event.preventDefault();
-            const inputEl = document.getElementById('ai-chat-input');
-            const query = inputEl.value.trim();
-            if (!query) return;
-
-            appendChatBubble('user', query);
-            inputEl.value = "";
-
-            const currentFormula = document.getElementById('formula-badge').innerText;
-            const parsedAtoms = atoms.map(a => ({ id: a.id, element: a.type }));
-            const parsedBonds = bonds.map(b => {
-                const s = atoms.find(a => a.id === b.source);
-                const t = atoms.find(a => a.id === b.target);
-                return `${s?.type || '?'}-${t?.type || '?'}`;
-            });
-
-            appendChatBubble('ai', `
-                <div class="flex items-center gap-2 text-emerald-400">
-                    <i class="fa-solid fa-spinner animate-spin"></i>
-                    <span>Berpikir...</span>
-                </div>
-            `, true);
-
-            const richPrompt = `Konteks Kanvas Kimia Aktif Saat Ini:
-            Formula Molekul: ${currentFormula}
-            Struktur Atoms: ${JSON.stringify(parsedAtoms)}
-            Struktur Bonds: ${JSON.stringify(parsedBonds)}
-            
-            Pertanyaan Pengguna: "${query}"`;
-
-            try {
-                const responseText = await fetchGeminiAPI(richPrompt);
-                const container = document.getElementById('ai-chat-container');
-                if (container.lastChild) container.removeChild(container.lastChild);
-                appendChatBubble('ai', responseText);
-            } catch (error) {
-                console.error("AI Chat failed:", error);
-                const container = document.getElementById('ai-chat-container');
-                if (container.lastChild) container.removeChild(container.lastChild);
-                appendChatBubble('ai', `<span class="text-rose-400"><i class="fa-solid fa-circle-exclamation"></i> Gagal memproses data chat AI.</span>`, true);
-            }
+            setTimeout(() => { splash.style.display = 'none'; }, 600);
         }
 
         // --- CPK CORE LOGIC ---
@@ -978,7 +767,6 @@
             if (!c) return;
             if (atoms.length === 0) return;
             
-            // Check connectivity component
             const visited = new Set(), queue = [atoms[0].id]; visited.add(atoms[0].id);
             while (queue.length > 0) {
                 const curr = queue.shift();
@@ -994,7 +782,7 @@
             }
 
             if (getMorganSignature() === c.sig) {
-                showToast(`Verifikasi Berhasil! Struktur ${c.title} cocok! 🎉`);
+                showToast(`Verifikasi Berhasil! Struktur ${c.title} cocok! 🎯`);
                 score++;
                 document.getElementById('score-counter').innerText = `${score} / ${CHALLENGES.length}`;
                 if (currentChallengeIndex < activeChallenges.length - 1) {
@@ -1005,30 +793,6 @@
                 }
             } else {
                 showToast("Struktur tidak sesuai atau tidak stabil. Periksa kembali ikatan!", true);
-            }
-        }
-
-        async function triggerCustomAIMission() {
-            const queryName = prompt("Masukkan nama senyawa organik bebas (Contoh: Benzena, Sikloheksana):");
-            if (!queryName || !queryName.trim()) return;
-            showToast(`Menghubungi AI untuk merumuskan misi ${queryName}...`);
-
-            const customSystemInstruction = `Anda adalah Asisten Ahli Kimia MOLEKULA 3D. Wajib membalas HANYA dengan format raw JSON berikut tanpa tambahan teks: {"formula": "C3H6O3", "title": "Nama", "desc": "Petunjuk", "sig": "H[O]|H[O]|O[H,H]"}`;
-            try {
-                const aiResult = await fetchGeminiAPI(`Hasilkan modul misi kustom untuk: "${queryName}"`, customSystemInstruction);
-                let cleanJSON = aiResult.replace(/```json/g, '').replace(/```/g, '').trim();
-                const customMission = JSON.parse(cleanJSON);
-                customMission.category = "kustom";
-                CHALLENGES.push(customMission);
-                filterChallenges('all');
-                const newIdx = activeChallenges.findIndex(c => c.title === customMission.title);
-                if (newIdx !== -1) {
-                    document.getElementById('challenge-selector').value = newIdx;
-                    loadChallenge(newIdx);
-                }
-                showToast(`Misi kustom AI baru dibuat: ${customMission.title}! 🧪`);
-            } catch (e) {
-                showToast("AI gagal memformulasikan senyawa tersebut.", true);
             }
         }
 
